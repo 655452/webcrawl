@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Cards</title>
+    <style>
+        .card {
+            /* border: 1px solid #ccc; */
+            border-radius: 10px;
+            margin: 10px;
+            padding: 10px;
+            width: 300px;
+            display: inline-block;
+            box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
+        }
+        .card:hover{
+             box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+        div{
+            margin: 0px auto;
+            width: auto;
+            flex-wrap: wrap;
+            height: auto;
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+        }
+        h1{
+            text-align: center;
+            padding: 20px;
+            width: 100%;
+            /* border: 2px solid red; */
+            background-color: whitesmoke;
+        }
+    </style>
+</head>
+<body>
+<h1>Web Craweled Images</h1>
+    <div id="image-cards"></div>
+
+    <script>
+        // Function to load and display images from the CSV file
+        function loadImages() {
+            const imageCards = document.getElementById('image-cards');
+            
+            // Replace 'image_urls.csv' with the path to your CSV file
+            fetch('image_urls2.csv')
+                .then(response => response.text())
+                .then(data => {
+                    const rows = data.split('\n');
+                    rows.forEach(row => {
+                        const imageURL = row.trim();
+                        if (imageURL) {
+                            // Create a new image element
+                            const img = new Image();
+                            img.src = imageURL;
+                            // Check if the image has loaded and has a minimum size
+                            img.onload = function() {
+                                if (img.width > 50 && img.height > 50) {
+                                    // Create a card for the valid image
+                                    const card = document.createElement('div');
+                                    card.className = 'card';
+                                    const cardImg = document.createElement('img');
+                                    cardImg.src = imageURL;
+                                    card.appendChild(cardImg);
+                                    imageCards.appendChild(card);
+                                }
+                            };
+                            img.onerror = function() {
+                                // Handle cases where the image doesn't load
+                                console.log('Image failed to load:', imageURL);
+                            };
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading CSV file:', error);
+                });
+        }
+
+        // Load and display images when the page loads
+        window.addEventListener('load', loadImages);
+    </script>
+</body>
+</html>
